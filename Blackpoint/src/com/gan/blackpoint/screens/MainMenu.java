@@ -7,31 +7,26 @@ import aurelienribon.tweenengine.TweenManager;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
-import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.scenes.scene2d.Actor;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
-import com.badlogic.gdx.scenes.scene2d.ui.Label.LabelStyle;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
-import com.badlogic.gdx.scenes.scene2d.ui.TextButton.TextButtonStyle;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.gan.blackpoint.Blackpoint;
 import com.gan.blackpoint.tween.ActorAccessor;
 
 public class MainMenu implements Screen {
-	
+
 	private Stage stage;
 	private TextureAtlas atlas; 
 	private Skin skin;
 	private Table table;
 	private TextButton buttonExit, buttonPlay;
-	private BitmapFont white, black; // done
 	private Label heading;
 	private TweenManager tweenManager;
 
@@ -39,9 +34,9 @@ public class MainMenu implements Screen {
 	public void render(float delta) {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-		
+
 		tweenManager.update(delta);
-		
+
 		stage.act(delta);
 		stage.draw();
 	}
@@ -56,39 +51,16 @@ public class MainMenu implements Screen {
 	@Override
 	public void show() {
 		stage = new Stage();
-		
+
 		Gdx.input.setInputProcessor(stage);
-		
+
 		atlas = new TextureAtlas("ui/button.pack");
-		skin = new Skin(atlas);
+		skin = new Skin(Gdx.files.internal("ui/menuSkin.json"), atlas);
 
 		table = new Table(skin);
 		table.setBounds(0,0,Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
-		
-		white = new BitmapFont(Gdx.files.internal("font/white.fnt"), false);
-		black = new BitmapFont(Gdx.files.internal("font/black.fnt"), false);		
-		
-		// creating button
-		TextButtonStyle textButtonStyle = new TextButtonStyle();
-		textButtonStyle.up = skin.getDrawable("button.up");
-		textButtonStyle.down = skin.getDrawable("button.down");
-		textButtonStyle.pressedOffsetX = 1;
-		textButtonStyle.pressedOffsetY = -1;
-		textButtonStyle.font = white;
-		
-		buttonExit = new TextButton("EXIT", textButtonStyle);
-		
-		buttonExit.setWidth(200);
-		buttonExit.pad(15);
-		buttonExit.addListener(new ClickListener() {
-			@Override
-			public void clicked(InputEvent event, float x, float y) {
-				Gdx.app.exit();
-			}
-		});
-		
-		buttonPlay = new TextButton("PLAY", textButtonStyle);
-		buttonPlay.pad(15);
+
+		buttonPlay = new TextButton("PLAY", skin);
 		buttonPlay.addListener(new ClickListener() {
 			@Override
 			public void clicked(InputEvent event, float x, float y) {
@@ -97,10 +69,19 @@ public class MainMenu implements Screen {
 				super.clicked(event, x, y);
 			}
 		});
+		buttonPlay.pad(15);
+
+		buttonExit = new TextButton("EXIT", skin);
+		buttonExit.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				Gdx.app.exit();
+			}
+		});
+		buttonExit.pad(15);
 		
 		// creating heading
-		LabelStyle headingStyle = new LabelStyle(white, Color.WHITE);
-		heading = new Label(Blackpoint.TITLE, headingStyle);
+		heading = new Label(Blackpoint.TITLE, skin);
 		
 		table.add(heading).padBottom(50);
 		table.row();
@@ -155,8 +136,6 @@ public class MainMenu implements Screen {
 
 	@Override
 	public void dispose() {
-		white.dispose();
-		black.dispose();
 		stage.dispose();
 		atlas.dispose();
 		skin.dispose();
