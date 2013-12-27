@@ -82,7 +82,7 @@ public class LevelMenu implements Screen {
 
 	@Override
 	public void hide() {
-
+		dispose();
 	}
 
 	@Override

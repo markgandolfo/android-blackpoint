@@ -25,11 +25,11 @@ public class Splash implements Screen {
 		Gdx.gl.glClearColor(0, 0, 0, 1);
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
-		tweenManager.update(delta);		
-		
 		batch.begin();
 		splash.draw(batch);
 		batch.end();
+		
+		tweenManager.update(delta);		
 	}
 
 	@Override
@@ -57,11 +57,13 @@ public class Splash implements Screen {
 			}
 			
 		}).start(tweenManager);
+		
+		tweenManager.update(Float.MIN_VALUE);
 	}
 
 	@Override
 	public void hide() {
-		
+		dispose();
 	}
 
 	@Override
