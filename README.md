@@ -1,4 +1,4 @@
 android-blackpoint
 ==================
 
-Blackpoint game in Android, following [libgdx tutorial by dermetfan](https://www.youtube.com/user/dermetfan?feature=watch)
+Blackpoint game in [libgdx](http://libgdx.badlogicgames.com/), following a tutorial by [dermetfan](https://www.youtube.com/user/dermetfan?feature=watch)

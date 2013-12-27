@@ -1,11 +1,11 @@
 package com.gan.blackpoint;
 
 import com.badlogic.gdx.Game;
-import com.gan.blackpoint.screens.Splash;
+import com.gan.blackpoint.screens.LevelMenu;
 
 public class Blackpoint extends Game {
 	
-	public static final String TITLE = "Blackpoint", 
+	public static final String 	TITLE 	= "Blackpoint", 
 								VERSION = "0.0.0.0.1 alpha";
 	
 	@Override
