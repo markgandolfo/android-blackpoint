@@ -1,7 +1,7 @@
 package com.gan.blackpoint;
 
 import com.badlogic.gdx.Game;
-import com.gan.blackpoint.screens.LevelMenu;
+import com.gan.blackpoint.screens.Splash;
 
 public class Blackpoint extends Game {
 	
