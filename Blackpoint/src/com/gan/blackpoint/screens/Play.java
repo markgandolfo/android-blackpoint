@@ -24,9 +24,9 @@ public class Play implements Screen {
 	private Box2DDebugRenderer debugRenderer;
 	private OrthographicCamera camera;
 
-	private final float PIXELS_TO_METERS = 15,			// how many pixels to a meter
+	private final float PIXELS_TO_METERS = 15f,			// how many pixels to a meter
 						TIME_STEP = 1 / 60f, 			// 60 fps
-						SPEED = 500,					// speed constant
+						SPEED = 500f,					// speed constant
 						MIN_ZOOM = .25f;				// How far in should we be able to zoom
 	
 	
@@ -107,7 +107,7 @@ public class Play implements Screen {
 				if(amount == -1 && camera.zoom <= MIN_ZOOM) {
 					camera.zoom = MIN_ZOOM;
 				} else {
-					camera.zoom += amount / 25f;
+					camera.zoom += amount / PIXELS_TO_METERS;
 				}
 				return true;
 			}
