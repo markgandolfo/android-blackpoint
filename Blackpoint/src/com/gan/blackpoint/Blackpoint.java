@@ -1,7 +1,7 @@
 package com.gan.blackpoint;
 
 import com.badlogic.gdx.Game;
-import com.gan.blackpoint.screens.Settings;
+import com.gan.blackpoint.screens.Play;
 
 public class Blackpoint extends Game {
 	
@@ -10,7 +10,7 @@ public class Blackpoint extends Game {
 	
 	@Override
 	public void create() {
-		setScreen(new Settings());
+		setScreen(new Play());
 	}
 
 	@Override

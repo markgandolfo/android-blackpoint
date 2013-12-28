@@ -55,6 +55,13 @@ public class LevelMenu implements Screen {
 		ScrollPane scrollPane = new ScrollPane(list, skin);
 		
 		TextButton play = new TextButton("PLAY", skin);
+		play.addListener(new ClickListener() {
+			@Override
+			public void clicked(InputEvent event, float x, float y) {
+				((Game) Gdx.app.getApplicationListener()).setScreen(new Play());
+				super.clicked(event, x, y);
+			}
+		});
 		play.pad(15);
 		
 		TextButton back = new TextButton("BACK", skin, "small");
