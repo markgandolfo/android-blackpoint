@@ -1,5 +1,8 @@
 package com.gan.blackpoint.screens;
 
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
+import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
+
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Screen;
@@ -18,11 +21,7 @@ public class LevelMenu implements Screen {
 	
 	private Stage stage;
 	private Table table;
-	private TextureAtlas atlas;
 	private Skin skin;
-	private List list;
-	private ScrollPane scrollPane;
-	private TextButton play, back;
 	
 	@Override
 	public void render(float delta) {
@@ -36,8 +35,7 @@ public class LevelMenu implements Screen {
 	@Override
 	public void resize(int width, int height) {
 		stage.setViewport(width, height, true);
-		table.setClip(true); // work around for table.setTransform(true);
-		table.setSize(width, height);
+		table.invalidateHierarchy();
 	}
 
 	@Override
@@ -45,20 +43,21 @@ public class LevelMenu implements Screen {
 		stage = new Stage();
 		Gdx.input.setInputProcessor(stage);
 		
-		atlas = new TextureAtlas("ui/atlas.pack");
+		TextureAtlas atlas = new TextureAtlas("ui/atlas.pack");
 		skin = new Skin(Gdx.files.internal("ui/menuSkin.json"), atlas);
 		
 		table = new Table(skin);
+		table.setFillParent(true);
 		table.setBounds(0, 0, Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		
-		list = new List(new String[] { "one", "two", "threeasdfasdf asdfa asdf asdf asd fasdf asd fasd f", "so", "on", "two", "three", "four", "and", "so", "on" }, skin);
+		List list = new List(new String[] { "one", "two", "threeasdfasdf asdfa asdf asdf asd fasdf asd fasd f", "so", "on", "two", "three", "four", "and", "so", "on" }, skin);
 		
-		scrollPane = new ScrollPane(list, skin);
+		ScrollPane scrollPane = new ScrollPane(list, skin);
 		
-		play = new TextButton("PLAY", skin);
+		TextButton play = new TextButton("PLAY", skin);
 		play.pad(15);
 		
-		back = new TextButton("BACK", skin, "small");
+		TextButton back = new TextButton("BACK", skin, "small");
 		back.addListener(new ClickListener() {
 			
 			@Override
@@ -69,13 +68,13 @@ public class LevelMenu implements Screen {
 		back.pad(10);
 
 		// add elements into table
-		table.add().width(table.getWidth() / 3);
-		table.add("SELECT LEVEL").width(table.getWidth() / 3);
-		table.add().width(table.getWidth() / 3).row();
-		table.add(scrollPane).left().expandY();
-		table.add(play);
-		table.add(back).bottom().right();
+		table.setBounds(0, 0, stage.getWidth(), stage.getHeight());
+		table.add("SELECT LEVEL").colspan(3).expandX().spaceBottom(50).row();
+		table.add(scrollPane).uniformX().top().left().expandY();
+		table.add(play).uniformX();
+		table.add(back).bottom().right().uniformX();
 		stage.addActor(table);
+		stage.addAction(sequence(moveTo(0, stage.getHeight()), moveTo(0, 0, .5f)));
 		
 		
 	}
@@ -97,8 +96,8 @@ public class LevelMenu implements Screen {
 
 	@Override
 	public void dispose() {
-		atlas.dispose();
 		skin.dispose();
+		stage.dispose();
 	}
 
 }

@@ -34,11 +34,14 @@ public class Splash implements Screen {
 
 	@Override
 	public void resize(int width, int height) {
-		
+		splash.setSize(width, height);
 	}
 
 	@Override
 	public void show() {
+		// apply preferences
+		Gdx.graphics.setVSync(Settings.vSync());
+		
 		batch = new SpriteBatch();
 		tweenManager = new TweenManager();
 
@@ -46,7 +49,6 @@ public class Splash implements Screen {
 		
 		Texture splashTexture = new Texture("img/splash.png");
 		splash = new Sprite(splashTexture);
-		splash.setSize(Gdx.graphics.getWidth(), Gdx.graphics.getHeight());
 		
 		Tween.set(splash, SpriteAccessor.ALPHA).target(0).start(tweenManager);
 		Tween.to(splash, SpriteAccessor.ALPHA, 1).target(1).repeatYoyo(1,  0.5f).setCallback(new TweenCallback() {
