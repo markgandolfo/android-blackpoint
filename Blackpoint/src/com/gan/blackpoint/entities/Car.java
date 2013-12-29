@@ -1,5 +1,7 @@
 package com.gan.blackpoint.entities;
 
+import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputAdapter;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
@@ -11,10 +13,10 @@ import com.badlogic.gdx.physics.box2d.World;
 import com.badlogic.gdx.physics.box2d.joints.WheelJoint;
 import com.badlogic.gdx.physics.box2d.joints.WheelJointDef;
 
-public class Car {
+public class Car extends InputAdapter {
 	private Body chassis, leftWheel, rightWheel;
 	private WheelJoint leftAxis, rightAxis;
-	
+	private float speed = 75;
 	
 	public Car(World world, FixtureDef chassisFixtureDef, FixtureDef wheelFixtureDef, float x, float y, float width, float height) {
 		BodyDef bodyDef = new BodyDef();
@@ -48,20 +50,44 @@ public class Car {
 		axisDef.localAnchorA.set(-width /2 * .75f + wheelShape.getRadius(), -height / 2 * 1.25f);
 		axisDef.frequencyHz = chassisFixtureDef.density; 
 		axisDef.localAxisA.set(Vector2.Y);
-		
+		axisDef.maxMotorTorque = chassisFixtureDef.density * 10;
+				
 		leftAxis = (WheelJoint) world.createJoint(axisDef);
 		
 		// right
 		axisDef.bodyB = rightWheel;
 		axisDef.localAnchorA.x *= -1;
-		rightAxis = (WheelJoint) world.createJoint(axisDef);
-		
-		
-		
-		
-		
-		
-		
+		rightAxis = (WheelJoint) world.createJoint(axisDef);		
+	}
+	
+	@Override
+	public boolean keyDown(int keycode) {
+		switch(keycode) {
+		case Keys.W:
+			leftAxis.enableMotor(true);
+			leftAxis.setMotorSpeed(-speed);
+			break;
+		case Keys.S:
+			leftAxis.enableMotor(true);
+			leftAxis.setMotorSpeed(speed);
+			break;
+		}
+		return true;
+	}
+	
+	@Override
+	public boolean keyUp(int keycode) {
+		switch(keycode) {
+		case Keys.W:
+		case Keys.S:
+			leftAxis.enableMotor(false);
+			break;
+		}
+		return true;
+	}
+	
+	public Body getChassis() {
+		return chassis;
 	}
 	
 }

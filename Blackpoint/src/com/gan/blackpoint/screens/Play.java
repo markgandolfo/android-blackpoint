@@ -3,10 +3,10 @@ package com.gan.blackpoint.screens;
 import com.badlogic.gdx.Game;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input.Keys;
+import com.badlogic.gdx.InputMultiplexer;
 import com.badlogic.gdx.Screen;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.OrthographicCamera;
-import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.math.MathUtils;
@@ -16,12 +16,8 @@ import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.BodyDef.BodyType;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.ChainShape;
-import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
-import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 import com.badlogic.gdx.utils.Array;
 import com.gan.blackpoint.InputController;
 import com.gan.blackpoint.entities.Car;
@@ -59,8 +55,8 @@ public class Play implements Screen {
 //		car.applyForceToCenter(movement, true);
 //		box.applyAngularImpulse(spin, true);
 
-//		camera.position.set(box.getPosition().x,  box.getPosition().y, 0);
-		
+		camera.position.set(car.getChassis().getPosition().x,  car.getChassis().getPosition().y, 0);
+
 		camera.update();
 		
 		batch.setProjectionMatrix(camera.combined);
@@ -93,62 +89,6 @@ public class Play implements Screen {
 
 		camera = new OrthographicCamera();
 
-		Gdx.input.setInputProcessor(new InputController() {
-			@Override
-			public boolean keyDown(int keycode) {
-				switch(keycode) {
-					case Keys.ESCAPE:
-						((Game) Gdx.app.getApplicationListener()).setScreen(new LevelMenu());
-						break;
-					case Keys.W:
-						movement.y = SPEED;
-						break;
-					case Keys.A:
-						movement.x = -SPEED;
-						break;
-					case Keys.S:
-						movement.y = -SPEED;
-						break;
-					case Keys.D:
-						movement.x = SPEED;
-						break;
-					case Keys.Q:
-						spin = ANGULAR_MOMENTUM;
-						break;
-					case Keys.E:
-						spin = -ANGULAR_MOMENTUM;
-				}
-				return true;	
-			}
-			@Override
-			public boolean keyUp(int keycode) {
-				switch(keycode) {
-				case Keys.W:
-				case Keys.S:	
-					movement.y = 0;
-					break;
-				case Keys.A:
-				case Keys.D:	
-					movement.x = 0;
-					break;
-				case Keys.Q:
-				case Keys.E:
-					spin = 0;
-					break;
-			}
-			return true;	
-			}
-			
-			@Override
-			public boolean scrolled(int amount) {
-				if(amount == -1 && camera.zoom <= MIN_ZOOM) {
-					camera.zoom = MIN_ZOOM;
-				} else {
-					camera.zoom += amount / PIXELS_TO_METERS;
-				}
-				return true;
-			}
-		});
 		
 		BodyDef bodyDef = new BodyDef();
 		FixtureDef fixtureDef = new FixtureDef();
@@ -165,6 +105,29 @@ public class Play implements Screen {
 		
 		car = new Car(world, fixtureDef, wheelFixtureDef, 0, 3, 3, 1.5f);
 		
+		Gdx.input.setInputProcessor(new InputMultiplexer(new InputController() {
+			@Override
+			public boolean keyDown(int keycode) {
+				switch(keycode) {
+					case Keys.ESCAPE:
+						((Game) Gdx.app.getApplicationListener()).setScreen(new LevelMenu());
+						break;
+				}
+				return false;	
+			}
+			
+			@Override
+			public boolean scrolled(int amount) {
+				if(amount == -1 && camera.zoom <= MIN_ZOOM) {
+					camera.zoom = MIN_ZOOM;
+				} else {
+					camera.zoom += amount / PIXELS_TO_METERS;
+				}
+				return false;
+			}
+		}, car));
+		
+		
 		// GROUND
 		// Body Definition
 		bodyDef.type = BodyType.StaticBody;
@@ -180,7 +143,6 @@ public class Play implements Screen {
 		fixtureDef.restitution = 0;
 		
 		world.createBody(bodyDef).createFixture(fixtureDef);
-		
 		
 		groundShape.dispose();
 	}
