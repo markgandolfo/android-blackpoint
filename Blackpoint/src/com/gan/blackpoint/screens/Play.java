@@ -24,6 +24,7 @@ import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
 import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 import com.badlogic.gdx.utils.Array;
 import com.gan.blackpoint.InputController;
+import com.gan.blackpoint.entities.Car;
 
 public class Play implements Screen {
 
@@ -34,6 +35,8 @@ public class Play implements Screen {
 	private SpriteBatch batch;
 	private Body box;
 	private Array<Body> tmpBodies = new Array<Body>();
+	
+	private Car car;
 	
 	private final float PIXELS_TO_METERS = 15f,			// how many pixels to a meter
 						TIME_STEP = 1 / 60f, 			// 60 fps
@@ -53,10 +56,11 @@ public class Play implements Screen {
 		Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
 		
 		world.step(TIME_STEP, VELOCITY_ITERATIONS, POSITION_ITERATIONS);
-		box.applyForceToCenter(movement, true);
-		box.applyAngularImpulse(spin, true);
+//		car.applyForceToCenter(movement, true);
+//		box.applyAngularImpulse(spin, true);
 
-		camera.position.set(box.getPosition().x,  box.getPosition().y, 0);
+//		camera.position.set(box.getPosition().x,  box.getPosition().y, 0);
+		
 		camera.update();
 		
 		batch.setProjectionMatrix(camera.combined);
@@ -148,45 +152,18 @@ public class Play implements Screen {
 		
 		BodyDef bodyDef = new BodyDef();
 		FixtureDef fixtureDef = new FixtureDef();
-
-		// BOX
-		// body definition
-		bodyDef.type = BodyType.DynamicBody;
-		bodyDef.position.set(2.25f,10);
+		FixtureDef wheelFixtureDef = new FixtureDef();
 		
-		// Box Shape
-		PolygonShape boxShape = new PolygonShape();
-		boxShape.setAsBox(.5f, 1); // half height, and width.. so the box will be 1m x 2m. 
+		// Car 
+		fixtureDef.density = 5;
+		fixtureDef.friction = .4f;
+		fixtureDef.restitution = .3f;
 		
-		// box fixture
-		fixtureDef.shape = boxShape;
-		fixtureDef.friction = .25f;
-		fixtureDef.restitution = .1f;
-		fixtureDef.density = 5;		// 5kg in a square meter
-				
-		box = world.createBody(bodyDef);
-		box.createFixture(fixtureDef);
-
-		boxSprite = new Sprite(new Texture("img/player.png"));
-		boxSprite.setSize(2, 2);
-		boxSprite.setOrigin(boxSprite.getWidth() / 2, boxSprite.getHeight() / 2);
-		box.setUserData(boxSprite);
-
-		// Ball Shape
-		CircleShape ballShape = new CircleShape();
-		ballShape.setRadius(.5f);
-		ballShape.setPosition(new Vector2(0, 1.5f));
+		wheelFixtureDef.density = fixtureDef.density - .5f;
+		wheelFixtureDef.friction = 1;
+		wheelFixtureDef.restitution = .4f;
 		
-		// Ball Fixture definition
-		fixtureDef.shape = ballShape;
-		fixtureDef.density = 3.5f; // kilograms in one square meter
-		fixtureDef.friction = .25f; // 0-1; 1 means can't be moved. 0 is no friction
-		fixtureDef.restitution = .8f; // how bouncy the object is.. i.e. dropped from a height of 1m, at .8f it'll jump up 80cm. 
-		
-		// Attach ball it to the world.
-		box.createFixture(fixtureDef);
-		
-		ballShape.dispose();
+		car = new Car(world, fixtureDef, wheelFixtureDef, 0, 3, 3, 1.5f);
 		
 		// GROUND
 		// Body Definition
@@ -202,39 +179,8 @@ public class Play implements Screen {
 		fixtureDef.friction = .5f; 
 		fixtureDef.restitution = 0;
 		
-		Body ground = world.createBody(bodyDef);
-		ground.createFixture(fixtureDef);
+		world.createBody(bodyDef).createFixture(fixtureDef);
 		
-		// other box
-		bodyDef.position.y = 7;
-		
-		PolygonShape otherBoxShape = new PolygonShape();
-		otherBoxShape.setAsBox(.25f, .25f);
-		
-		fixtureDef.shape = otherBoxShape;
-		
-		Body otherBox = world.createBody(bodyDef);
-		otherBox.createFixture(fixtureDef);
-		otherBoxShape.dispose();
-		
-		// distance joint between other box and box
-		DistanceJointDef distanceJointDef = new DistanceJointDef();
-		distanceJointDef.bodyA = otherBox;
-		distanceJointDef.bodyB = box;
-		distanceJointDef.length = 5;
-		distanceJointDef.localAnchorB.set(0,0);
-		
-		world.createJoint(distanceJointDef);
-		
-		// rope joint between ground and player
-		RopeJointDef ropeJointDef = new RopeJointDef();
-		ropeJointDef.bodyA = ground;
-		ropeJointDef.bodyB = box;
-		ropeJointDef.maxLength = 4;
-		ropeJointDef.localAnchorA.set(0,0);
-		ropeJointDef.localAnchorB.set(0,0); 
-		
-//		world.createJoint(ropeJointDef);
 		
 		groundShape.dispose();
 	}
