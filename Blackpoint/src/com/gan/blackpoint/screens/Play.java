@@ -20,6 +20,8 @@ import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.PolygonShape;
 import com.badlogic.gdx.physics.box2d.World;
+import com.badlogic.gdx.physics.box2d.joints.DistanceJointDef;
+import com.badlogic.gdx.physics.box2d.joints.RopeJointDef;
 import com.badlogic.gdx.utils.Array;
 import com.gan.blackpoint.InputController;
 
@@ -200,7 +202,39 @@ public class Play implements Screen {
 		fixtureDef.friction = .5f; 
 		fixtureDef.restitution = 0;
 		
-		world.createBody(bodyDef).createFixture(fixtureDef);
+		Body ground = world.createBody(bodyDef);
+		ground.createFixture(fixtureDef);
+		
+		// other box
+		bodyDef.position.y = 7;
+		
+		PolygonShape otherBoxShape = new PolygonShape();
+		otherBoxShape.setAsBox(.25f, .25f);
+		
+		fixtureDef.shape = otherBoxShape;
+		
+		Body otherBox = world.createBody(bodyDef);
+		otherBox.createFixture(fixtureDef);
+		otherBoxShape.dispose();
+		
+		// distance joint between other box and box
+		DistanceJointDef distanceJointDef = new DistanceJointDef();
+		distanceJointDef.bodyA = otherBox;
+		distanceJointDef.bodyB = box;
+		distanceJointDef.length = 5;
+		distanceJointDef.localAnchorB.set(0,0);
+		
+		world.createJoint(distanceJointDef);
+		
+		// rope joint between ground and player
+		RopeJointDef ropeJointDef = new RopeJointDef();
+		ropeJointDef.bodyA = ground;
+		ropeJointDef.bodyB = box;
+		ropeJointDef.maxLength = 4;
+		ropeJointDef.localAnchorA.set(0,0);
+		ropeJointDef.localAnchorB.set(0,0); 
+		
+//		world.createJoint(ropeJointDef);
 		
 		groundShape.dispose();
 	}
